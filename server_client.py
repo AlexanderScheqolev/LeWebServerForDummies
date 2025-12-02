@@ -26,6 +26,16 @@ def Put(Source: str, Payload: str):
     with open("Data.json", "w") as DataFile:
         DataFile.write(json_str)
     return DataFile
+# Тут типа get запрос, но чет не пон, а зачем.
+def Get(File):
+    """
+    :param File:
+    :return:
+    """
+
+headers = {
+    "Content-Type": "application/json"
+}
 
 while True:
     data = conn.recv(1024)
