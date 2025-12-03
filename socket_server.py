@@ -25,6 +25,7 @@ def Put(Source: str, Payload: str):
     json_str = json.dumps(data, indent=4)
     with open("Data.json", "w") as DataFile:
         DataFile.write(json_str)
+    conn.sendall(DataFile)
     return DataFile
 # Тут типа get запрос, но чет не пон, а зачем.
 def Get(File):
@@ -32,6 +33,8 @@ def Get(File):
     :param File:
     :return:
     """
+    with open("Data.json", "r") as DataFile:
+        file_content = DataFile.read()
 
 headers = {
     "Content-Type": "application/json"
@@ -41,7 +44,7 @@ while True:
     data = conn.recv(1024)
     if not data:
         break
-    conn.sendall(data)
+
     print(data.decode('utf-8'))
 
 conn.close()
