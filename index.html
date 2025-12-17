@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="eu">
+<head>
+    <title>HW</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta http-equiv="x-ua-compatible" content="crhome=1">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Madimi+One&display=swap" rel="stylesheet">
+    <script type="text/javascript">
+
+        async function refreshData() {
+            const getRes = await fetch("/get");
+            document.getElementById("get").textContent = await getRes.text();
+
+            const vcRes = await fetch("/vclock");
+            document.getElementById("vclock").textContent = await vcRes.text();
+        }
+
+        window.addEventListener("load", async function() {
+
+            await refreshData();
+
+            const form = document.forms["replace"];
+            form.addEventListener("submit", async function (e) {
+                e.preventDefault();
+
+                const raw = form["text"].value;
+
+                let json;
+                try {
+                    json = JSON.parse(raw);
+                } catch (e) {
+                    alert("Invalid JSON in textarea!");
+                    return;
+                }
+
+                const res = await fetch("/replace", {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(json)
+                });
+
+                if (!res.ok) {
+                    alert("Fetch error: " + res.status);
+                    return;
+                }
+
+                await refreshData();
+            });
+        });
+
+    </script>
+</head>
+<body>
+
+<h2>/replace</h2>
+<form name="replace">
+    <textarea name="text" style="width:400px;height:150px;"></textarea>
+    <br>
+    <input type="submit" value="Submit">
+</form>
+
+<h2>/get</h2>
+<div id="get"></div>
+
+<h2>/vclock</h2>
+<div id="vclock"></div>
+
+</body>
+</html>
