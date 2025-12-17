@@ -1,12 +1,15 @@
 import socket
 import hashlib
 import json
+import os
+
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 s.bind(("localhost", 3030))
 s.listen(1)
-conn, addr = s.accept() # Принимаем разрешение на прием и передачу данных
 
+def init_request():
+    pass
 def Put(Source: str, Payload: str):
     """
     :param Source: Фамилия (строка)
@@ -28,23 +31,26 @@ def Put(Source: str, Payload: str):
     conn.sendall(DataFile)
     return DataFile
 # Тут типа get запрос, но чет не пон, а зачем.
-def Get(File):
+def Get(FileName):
     """
     :param File:
-    :return:
+    :return: file_content - файл
     """
-    with open("Data.json", "r") as DataFile:
+    with open(FileName, "r") as DataFile:
         file_content = DataFile.read()
+    return file_content
 
 headers = {
     "Content-Type": "application/json"
 }
 
 while True:
+    conn, addr = s.accept()  # Принимаем разрешение на прием и передачу данных
+    Put("Shchegolev",f"{os.getlogin()}/{os.uname()}")
     data = conn.recv(1024)
-    if not data:
+    if data:
         break
-
+    conn.sendall(data)
     Get()
 
 conn.close()
